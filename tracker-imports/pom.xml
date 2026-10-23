@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dev.adriangm</groupId>
+    <artifactId>job-application-tracker-modular</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>tracker-imports</artifactId>
+  <dependencies>
+    <dependency>
+      <groupId>dev.adriangm</groupId>
+      <artifactId>tracker-applications</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>1.14.1</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <targetPath>import-templates</targetPath>
+        <directory>${project.basedir}/../examples</directory>
+        <includes>
+          <include>offers-template.csv</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+</project>

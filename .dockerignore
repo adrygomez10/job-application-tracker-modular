@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+**/target
+reports
+**/*.log
+**/*.dump
+**/*.hprof
+backups
+.idea
+.vscode

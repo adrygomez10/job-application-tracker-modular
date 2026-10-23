@@ -1,0 +1,4 @@
+source,external_id,company,role,url,location,work_mode,technologies
+demo,offer-001,Example Labs,Java Developer,https://example.test/jobs/001,Madrid,REMOTE,Java
+demo,offer-002,Example Studio,Backend Developer,https://example.test/jobs/002,Sevilla,HYBRID,Spring
+demo,offer-003,,Invalid offer,,,,

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: page('Agenda', ~{::main}, 'agenda')}">
+<body>
+<main id="main" class="container">
+    <header class="page-heading">
+        <h1 class="page-title">Agenda</h1>
+        <p th:text="'Entrevistas y tareas de los registros sin archivar. Horas en ' + ${zone} + '.'"></p>
+    </header>
+
+    <section class="panel">
+        <h2 class="panel-title">Próximas entrevistas y pruebas</h2>
+        <p th:if="${#lists.isEmpty(interviews)}" class="muted">No hay actividades programadas.</p>
+        <ul class="open-list">
+            <li th:each="item : ${interviews}">
+                <h3><a th:href="@{/applications/{id}(id=${item.applicationId})}" th:text="${item.title}"></a></h3>
+                <p th:text="${item.company} + ' · ' + ${item.role}"></p>
+                <time th:datetime="${item.startsAt}" th:text="${@viewFormatting.dateTime(item.startsAt)}"></time>
+            </li>
+        </ul>
+    </section>
+
+    <section class="panel" th:unless="${#lists.isEmpty(awaitingResult)}">
+        <h2 class="panel-title">Pendientes de resultado</h2>
+        <p class="muted">Ya han pasado, pero siguen como programadas. Registra si se realizaron.</p>
+        <ul class="open-list">
+            <li th:each="item : ${awaitingResult}">
+                <h3><a th:href="@{/applications/{id}(id=${item.applicationId})}" th:text="${item.title}"></a></h3>
+                <p th:text="${item.company} + ' · ' + ${item.role}"></p>
+                <time th:datetime="${item.startsAt}" th:text="${@viewFormatting.dateTime(item.startsAt)}"></time>
+            </li>
+        </ul>
+    </section>
+
+    <section class="panel">
+        <h2 class="panel-title">Tareas pendientes</h2>
+        <p th:if="${#lists.isEmpty(tasks)}" class="muted">No tienes tareas pendientes.</p>
+        <ul class="open-list">
+            <li th:each="item : ${tasks}">
+                <h3><a th:href="@{/applications/{id}(id=${item.applicationId})}" th:text="${item.title}"></a></h3>
+                <p th:text="${item.company} + ' · ' + ${item.role}"></p>
+                <time th:datetime="${item.dueOn}" th:text="${#temporals.format(item.dueOn, 'dd/MM/yyyy')}"></time>
+                <span class="badge" th:if="${item.dueOn.isBefore(today)}">Vencida</span>
+            </li>
+        </ul>
+    </section>
+
+    <p class="hint" th:text="'Se muestran hasta ' + ${agendaLimit} + ' elementos por bloque, empezando por los más próximos. La ficha conserva todos.'"></p>
+</main>
+</body>
+</html>

@@ -1,0 +1,19 @@
+name: job-application-tracker-modular-quality
+services:
+  quality:
+    build:
+      context: .
+      target: quality
+    volumes:
+      - ./target:/workspace/reports
+  format:
+    build:
+      context: .
+      target: quality
+    entrypoint: [mvn, -B, -ntp, 'spotless:apply']
+    volumes:
+      - .:/workspace
+  maven:
+    extends:
+      service: quality
+    entrypoint: [mvn, -B, -ntp]

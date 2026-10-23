@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: page(${job.details.role}, ~{::main}, 'applications')}">
+<body>
+<main id="main" class="container" th:with="a=${job}, d=${job.details}">
+    <header class="page-heading">
+        <a th:href="@{/applications}">← Candidaturas</a>
+        <p>
+            <span class="company-label" th:text="${d.company}"></span>
+            <span class="badge" th:if="${a.archived}">Archivada</span>
+        </p>
+        <h1 class="page-title" th:text="${d.role}"></h1>
+        <p>
+            <span class="badge" th:text="${#messages.msg('status.' + a.status)}"></span>
+            <span th:text="${#messages.msg('mode.' + d.workMode)}"></span>
+            <span th:if="${!d.location.isEmpty()}" th:text="' · ' + ${d.location}"></span>
+        </p>
+        <div class="actions">
+            <a class="btn btn-primary" th:href="@{/applications/{id}/edit(id=${a.id})}">Editar datos</a>
+            <a th:if="${!d.url.isEmpty()}" th:href="${d.url}" target="_blank" rel="noopener noreferrer">Ver oferta ↗</a>
+            <form th:action="${a.archived} ? @{/applications/{id}/restore(id=${a.id})} : @{/applications/{id}/archive(id=${a.id})}"
+                  method="post">
+                <input type="hidden" name="version" th:value="${a.version}">
+                <button class="btn btn-outline-primary" th:text="${a.archived ? 'Recuperar' : 'Archivar'}"></button>
+            </form>
+        </div>
+    </header>
+
+    <section class="panel">
+        <h2 class="panel-title">Datos de la candidatura</h2>
+        <dl class="details-grid">
+            <div><dt>Fecha de solicitud</dt><dd th:text="${a.appliedOn == null ? 'Todavía no enviada' : #temporals.format(a.appliedOn, 'dd/MM/yyyy')}"></dd></div>
+            <div><dt>Origen</dt><dd th:text="${d.source.isEmpty() ? 'Sin especificar' : d.source}"></dd></div>
+            <div><dt>Tecnologías</dt><dd th:text="${d.technologies.isEmpty() ? 'Sin especificar' : d.technologies}"></dd></div>
+            <div><dt>Contacto</dt><dd th:text="${d.contact.isEmpty() ? 'Sin especificar' : d.contact}"></dd></div>
+        </dl>
+        <p class="preserve-lines" th:if="${!d.notes.isEmpty()}" th:text="${d.notes}"></p>
+    </section>
+
+    <section class="panel">
+        <h2 class="panel-title">Actualizar estado</h2>
+        <form th:action="@{/applications/{id}/status(id=${a.id})}" method="post" class="stack" aria-label="Actualizar estado">
+            <input type="hidden" name="version" th:value="${a.version}">
+            <div class="form-grid">
+                <div>
+                    <label for="new-status">Estado</label>
+                    <select id="new-status" name="status">
+                        <option th:each="s : ${statuses}" th:value="${s}" th:selected="${a.status == s}"
+                                th:text="${#messages.msg('status.' + s)}"></option>
+                    </select>
+                </div>
+                <div>
+                    <label for="applied-on">Fecha de solicitud</label>
+                    <input type="date" id="applied-on" name="appliedOn" th:value="${a.appliedOn}" th:max="${today}">
+                </div>
+            </div>
+            <label class="check"><input type="checkbox" name="correction" value="true"> Estoy corrigiendo un estado anterior</label>
+            <label for="reason">Motivo o contexto</label>
+            <textarea id="reason" name="reason" rows="2" maxlength="10000"></textarea>
+            <p class="hint">Puedes saltar fases. Para corregir o reabrir un proceso debes indicar el motivo. Si vuelves a Guardada, vacía la fecha.</p>
+            <button class="btn btn-primary">Actualizar estado</button>
+        </form>
+    </section>
+
+    <div class="columns">
+        <section class="panel">
+            <h2 class="panel-title">Entrevistas y pruebas</h2>
+            <p th:if="${#lists.isEmpty(a.interviews)}" class="muted">Todavía no hay actividades.</p>
+            <ul class="open-list">
+                <li th:each="i : ${a.interviews}">
+                    <h3 th:text="${i.title}"></h3>
+                    <p>
+                        <span th:text="${#messages.msg('interviewKind.' + i.kind)}"></span> ·
+                        <span th:text="${#messages.msg('outcome.' + i.outcome)}"></span>
+                    </p>
+                    <time th:datetime="${i.startsAt}" th:text="${@viewFormatting.dateTime(i.startsAt)}"></time>
+                    <p th:text="${i.location}"></p>
+                    <a th:if="${!i.url.isEmpty()}" th:href="${i.url}" target="_blank" rel="noopener noreferrer">Abrir enlace ↗</a>
+                    <p class="preserve-lines" th:text="${i.notes}"></p>
+                    <p class="preserve-lines" th:if="${!i.result.isEmpty()}" th:text="${i.result}"></p>
+                    <details>
+                        <summary>Actualizar resultado</summary>
+                        <form th:action="@{/applications/{id}/interviews/{interviewId}/result(id=${a.id},interviewId=${i.id})}"
+                              method="post" class="stack">
+                            <input type="hidden" name="version" th:value="${a.version}">
+                            <label th:for="'outcome-' + ${i.id}">Situación</label>
+                            <select name="outcome" th:id="'outcome-' + ${i.id}">
+                                <option th:each="o : ${interviewResults}" th:value="${o}" th:selected="${i.outcome == o}"
+                                        th:text="${#messages.msg('outcome.' + o)}"></option>
+                            </select>
+                            <label th:for="'result-' + ${i.id}">Resultado</label>
+                            <textarea name="result" maxlength="10000" th:id="'result-' + ${i.id}" th:text="${i.result}"></textarea>
+                            <button class="btn btn-primary">Guardar resultado</button>
+                        </form>
+                    </details>
+                </li>
+            </ul>
+            <details>
+                <summary>Añadir entrevista o prueba</summary>
+                <form th:action="@{/applications/{id}/interviews(id=${a.id})}" method="post" class="stack" aria-label="Añadir entrevista">
+                    <input type="hidden" name="version" th:value="${a.version}">
+                    <label for="interview-title">Título</label>
+                    <input id="interview-title" name="title" required maxlength="180">
+                    <label for="interview-kind">Tipo</label>
+                    <select id="interview-kind" name="kind">
+                        <option th:each="k : ${interviewKinds}" th:value="${k}" th:text="${#messages.msg('interviewKind.' + k)}"></option>
+                    </select>
+                    <label for="starts-at" th:text="'Fecha y hora (' + ${zone} + ')'">Fecha y hora</label>
+                    <input id="starts-at" type="datetime-local" name="startsAt" required>
+                    <label for="interview-location">Ubicación</label>
+                    <input id="interview-location" name="location" maxlength="500">
+                    <label for="interview-url">Enlace</label>
+                    <input id="interview-url" type="url" name="url" maxlength="2000">
+                    <label for="interview-notes">Notas de preparación</label>
+                    <textarea id="interview-notes" name="notes" maxlength="10000"></textarea>
+                    <button class="btn btn-primary">Añadir actividad</button>
+                </form>
+            </details>
+        </section>
+
+        <section class="panel">
+            <h2 class="panel-title">Próximos pasos</h2>
+            <p th:if="${#lists.isEmpty(a.tasks)}" class="muted">No hay tareas registradas.</p>
+            <ul class="open-list">
+                <li th:each="t : ${a.tasks}">
+                    <h3 th:text="${t.title}"></h3>
+                    <time th:datetime="${t.dueOn}" th:text="${#temporals.format(t.dueOn, 'dd/MM/yyyy')}"></time>
+                    <span class="badge" th:if="${t.completed}">Completada</span>
+                    <span class="badge" th:if="${!t.completed and t.dueOn.isBefore(today)}">Vencida</span>
+                    <form th:unless="${t.completed}" th:action="@{/applications/{id}/tasks/{taskId}/complete(id=${a.id},taskId=${t.id})}" method="post">
+                        <input type="hidden" name="version" th:value="${a.version}">
+                        <button class="btn btn-outline-primary">Completar tarea</button>
+                    </form>
+                </li>
+            </ul>
+            <details>
+                <summary>Añadir tarea</summary>
+                <form th:action="@{/applications/{id}/tasks(id=${a.id})}" method="post" class="stack" aria-label="Añadir tarea">
+                    <input type="hidden" name="version" th:value="${a.version}">
+                    <label for="task-title">Tarea</label>
+                    <input id="task-title" name="title" required maxlength="180">
+                    <label for="due-on">Vencimiento</label>
+                    <input id="due-on" name="dueOn" type="date" required>
+                    <button class="btn btn-primary">Añadir tarea</button>
+                </form>
+            </details>
+        </section>
+    </div>
+
+    <section class="panel">
+        <h2 class="panel-title">Historial</h2>
+        <form th:action="@{/applications/{id}/notes(id=${a.id})}" method="post" class="stack" aria-label="Añadir nota">
+            <input type="hidden" name="version" th:value="${a.version}">
+            <label for="note-body">Nueva nota</label>
+            <textarea id="note-body" name="body" required maxlength="10000" rows="3"></textarea>
+            <button class="btn btn-primary">Añadir nota</button>
+        </form>
+        <ol class="open-list timeline">
+            <li th:each="e : ${a.timeline}">
+                <time th:datetime="${e.occurredAt}" th:text="${@viewFormatting.dateTime(e.occurredAt)}"></time>
+                <h3 th:text="${#messages.msg('event.' + e.kind)}"></h3>
+                <p th:if="${e.nextStatus != null}">
+                    <span th:if="${e.previousStatus != null}" th:text="${#messages.msg('status.' + e.previousStatus)} + ' → '"></span>
+                    <span th:text="${#messages.msg('status.' + e.nextStatus)}"></span>
+                </p>
+                <p class="preserve-lines" th:if="${!e.body.isEmpty()}" th:text="${e.body}"></p>
+            </li>
+        </ol>
+    </section>
+</main>
+</body>
+</html>

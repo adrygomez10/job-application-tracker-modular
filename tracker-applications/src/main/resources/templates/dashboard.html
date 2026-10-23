@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: page('Resumen', ~{::main}, 'dashboard')}">
+<body>
+<main id="main" class="container">
+    <header class="page-heading">
+        <h1 class="page-title">Resumen</h1>
+        <p>Estado de tus procesos y próximas actividades.</p>
+        <a class="btn btn-primary" th:href="@{/applications/new}">Guardar oferta</a>
+    </header>
+
+    <section aria-label="Actividad" class="stats">
+        <div><strong th:text="${counts.active()}">0</strong><span>Candidaturas activas</span></div>
+        <div><strong th:text="${counts.of(T(dev.adriangm.tracker.applications.domain.Status).SAVED)}">0</strong><span>Ofertas guardadas</span></div>
+        <div><strong th:text="${counts.of(T(dev.adriangm.tracker.applications.domain.Status).OFFER_RECEIVED)}">0</strong><span>Ofertas recibidas</span></div>
+    </section>
+
+    <section class="panel">
+        <h2 class="panel-title">Cómo van tus procesos</h2>
+        <dl class="status-counts">
+            <div th:each="entry : ${counts.byStatus()}">
+                <dt th:text="${#messages.msg('status.' + entry.key)}">Estado</dt>
+                <dd th:text="${entry.value}">0</dd>
+            </div>
+        </dl>
+    </section>
+
+    <div class="columns">
+        <section class="panel">
+            <h2 class="panel-title">Próximas entrevistas</h2>
+            <p th:if="${#lists.isEmpty(interviews)}" class="muted">No hay entrevistas pendientes. Añádelas desde una candidatura.</p>
+            <ul class="open-list">
+                <li th:each="item : ${interviews}">
+                    <a th:href="@{/applications/{id}(id=${item.applicationId})}" th:text="${item.title}"></a>
+                    <p th:text="${item.company}"></p>
+                    <time th:datetime="${item.startsAt}" th:text="${@viewFormatting.dateTime(item.startsAt)}"></time>
+                </li>
+            </ul>
+        </section>
+        <section class="panel">
+            <h2 class="panel-title">Próximos pasos</h2>
+            <p th:if="${#lists.isEmpty(tasks)}" class="muted">Todo al día. Puedes añadir una tarea para tu siguiente paso.</p>
+            <ul class="open-list">
+                <li th:each="item : ${tasks}">
+                    <a th:href="@{/applications/{id}(id=${item.applicationId})}" th:text="${item.title}"></a>
+                    <p th:text="${item.company}"></p>
+                    <time th:datetime="${item.dueOn}" th:text="${#temporals.format(item.dueOn, 'dd/MM/yyyy')}"></time>
+                    <span class="badge" th:if="${item.dueOn.isBefore(today)}">Vencida</span>
+                </li>
+            </ul>
+        </section>
+    </div>
+
+    <p><a th:href="@{/agenda}">Ver toda la agenda</a></p>
+</main>
+</body>
+</html>

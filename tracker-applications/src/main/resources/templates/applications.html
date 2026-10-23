@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: page('Candidaturas', ~{::main}, 'applications')}">
+<body>
+<main id="main" class="container">
+    <header class="page-heading">
+        <h1 class="page-title">Candidaturas</h1>
+        <p>Consulta, filtra y actualiza tus procesos de selección.</p>
+        <a class="btn btn-primary" th:href="@{/applications/new}">Guardar oferta</a>
+    </header>
+
+    <form th:action="@{/applications}" method="get" class="filters" aria-label="Filtrar candidaturas">
+        <div>
+            <label for="q">Empresa o puesto</label>
+            <input id="q" name="q" maxlength="180" th:value="${criteria.query}" placeholder="Buscar…">
+        </div>
+        <div>
+            <label for="status">Estado</label>
+            <select id="status" name="status">
+                <option value="">Todos</option>
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${#messages.msg('status.' + s)}"
+                        th:selected="${criteria.status == s}"></option>
+            </select>
+        </div>
+        <div>
+            <label for="mode">Modalidad</label>
+            <select id="mode" name="mode">
+                <option value="">Todas</option>
+                <option th:each="m : ${workModes}" th:value="${m}" th:text="${#messages.msg('mode.' + m)}"
+                        th:selected="${criteria.workMode == m}"></option>
+            </select>
+        </div>
+        <div>
+            <label for="from">Enviada desde</label>
+            <input type="date" name="from" id="from" th:value="${criteria.from}">
+        </div>
+        <div>
+            <label for="to">Enviada hasta</label>
+            <input type="date" name="to" id="to" th:value="${criteria.to}">
+        </div>
+        <label class="check"><input type="checkbox" name="archived" value="true" th:checked="${criteria.archived}"> Solo archivadas</label>
+        <button class="btn btn-primary" type="submit">Filtrar</button>
+        <a th:href="@{/applications}">Limpiar filtros</a>
+    </form>
+
+    <p class="muted" th:text="${results.total} + ' registros encontrados'"></p>
+    <section class="panel" aria-label="Resultados">
+        <p class="empty" th:if="${#lists.isEmpty(results.items)}">No hay ofertas con estos filtros. Guarda una nueva oferta o amplía la búsqueda.</p>
+        <ul class="open-list application-list">
+            <li th:each="item : ${results.items}">
+                <div>
+                    <span class="company-label" th:text="${item.company}"></span>
+                    <h2><a class="read-link" th:href="@{/applications/{id}(id=${item.id})}" th:text="${item.role}"></a></h2>
+                    <p class="muted" th:text="${#messages.msg('mode.' + item.workMode)}"></p>
+                </div>
+                <div class="record-meta">
+                    <span class="badge" th:text="${#messages.msg('status.' + item.status)}"></span>
+                    <time th:if="${item.appliedOn}" th:datetime="${item.appliedOn}"
+                          th:text="'Enviada el ' + ${#temporals.format(item.appliedOn, 'dd/MM/yyyy')}"></time>
+                </div>
+            </li>
+        </ul>
+    </section>
+
+    <nav aria-label="Páginas" class="actions" th:if="${results.totalPages > 1}">
+        <a th:if="${results.page > 0}"
+           th:href="@{/applications(q=${criteria.query},status=${criteria.status},mode=${criteria.workMode},from=${criteria.from},to=${criteria.to},archived=${criteria.archived},page=${results.page - 1})}">Anterior</a>
+        <span th:text="'Página ' + ${results.page + 1} + ' de ' + ${results.totalPages}"></span>
+        <a th:if="${results.page + 1 < results.totalPages}"
+           th:href="@{/applications(q=${criteria.query},status=${criteria.status},mode=${criteria.workMode},from=${criteria.from},to=${criteria.to},archived=${criteria.archived},page=${results.page + 1})}">Siguiente</a>
+    </nav>
+</main>
+</body>
+</html>

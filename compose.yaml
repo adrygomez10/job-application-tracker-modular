@@ -1,0 +1,34 @@
+name: job-application-tracker-modular
+services:
+  db:
+    image: postgres:18.6
+    environment:
+      POSTGRES_DB: tracker
+      POSTGRES_USER: tracker
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Run the setup script first}
+    volumes:
+      - tracker-data:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -h 127.0.0.1 -U tracker -d tracker']
+      interval: 5s
+      timeout: 5s
+      retries: 15
+  app:
+    image: job-application-tracker-modular:local
+    build:
+      context: .
+      target: runtime
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/tracker
+      DB_USERNAME: tracker
+      DB_PASSWORD: ${DB_PASSWORD:?Run the setup script first}
+      TRACKER_USERNAME: ${TRACKER_USERNAME:?Run the setup script first}
+      TRACKER_PASSWORD_HASH: ${TRACKER_PASSWORD_HASH:?Run the setup script first}
+      TRACKER_ZONE: ${TRACKER_ZONE:-Europe/Madrid}
+    ports:
+      - '127.0.0.1:${APP_PORT:-8091}:8080'
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  tracker-data:

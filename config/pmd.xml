@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Tracker maintainability" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.github.io/schema/ruleset_2_0_0.xsd">
+    <description>Mandatory maintainability and defect checks for production and test Java sources.</description>
+    <rule ref="category/java/design.xml/CognitiveComplexity"><properties><property name="reportLevel" value="10"/></properties></rule>
+    <rule ref="category/java/design.xml/CyclomaticComplexity"><properties><property name="methodReportLevel" value="8"/><property name="classReportLevel" value="80"/></properties></rule>
+    <rule ref="category/java/design.xml/NcssCount"><properties><property name="methodReportLevel" value="30"/><property name="classReportLevel" value="400"/></properties></rule>
+    <rule ref="category/java/design.xml/ExcessiveParameterList"><properties><property name="minimum" value="9"/></properties></rule>
+    <rule ref="category/java/design.xml/AvoidDeeplyNestedIfStmts"><properties><property name="problemDepth" value="3"/></properties></rule>
+    <rule ref="category/java/design.xml/CollapsibleIfStatements"/>
+    <rule ref="category/java/design.xml/TooManyMethods"><properties><property name="maxmethods" value="20"/></properties></rule>
+    <rule ref="category/java/design.xml/LogicInversion"/>
+    <rule ref="category/java/design.xml/InstantiableUtilityClass"/>
+    <rule ref="category/java/bestpractices.xml/AvoidReassigningParameters"/>
+    <rule ref="category/java/bestpractices.xml/PreserveStackTrace"/>
+    <rule ref="category/java/errorprone.xml/CompareObjectsWithEquals"/>
+    <rule ref="category/java/errorprone.xml/CloseResource"/>
+    <rule ref="category/java/errorprone.xml/AvoidCatchingGenericException"/>
+    <rule ref="category/java/design.xml/AvoidThrowingNullPointerException"/>
+    <rule ref="category/java/design.xml/SimplifyBooleanExpressions"/>
+    <rule ref="category/java/design.xml/SimplifyBooleanReturns"/>
+    <rule ref="category/java/design.xml/SimplifyConditional"/>
+    <rule ref="category/java/bestpractices.xml/UnusedLocalVariable"/>
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateField"/>
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod"/>
+    <rule ref="category/java/errorprone.xml/EmptyCatchBlock"/>
+    <rule ref="category/java/codestyle.xml/EmptyControlStatement"/>
+    <rule ref="category/java/errorprone.xml/ReturnFromFinallyBlock"/>
+    <rule ref="category/java/errorprone.xml/BrokenNullCheck"/>
+    <rule ref="category/java/design.xml/AvoidThrowingRawExceptionTypes"/>
+</ruleset>

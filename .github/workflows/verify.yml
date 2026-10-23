@@ -1,0 +1,23 @@
+name: Verify
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - name: Enforce static code quality
+        run: bash scripts/quality.sh
+      - name: Run all checks in Docker
+        run: bash scripts/test.sh
+      - name: Upload reports and fictional screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: verification
+          path: |
+            target/**

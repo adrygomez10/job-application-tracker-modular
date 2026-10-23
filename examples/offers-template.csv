@@ -1,0 +1,3 @@
+source,external_id,company,role,url,location,work_mode,technologies
+demo-template,template-001,"Example, Labs",Java Developer,https://example.test/jobs/template-001,Málaga,REMOTE,"Java, Spring"
+demo-template,template-002,Example Studio,Backend Developer,,,,

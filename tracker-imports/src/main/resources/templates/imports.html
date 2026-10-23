@@ -1,0 +1,11 @@
+<!doctype html><html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page('Importar ofertas', ~{::main}, 'imports')}">
+<main id="main" class="container">
+<h1>Importar ofertas</h1><p>Previsualiza el CSV antes de guardar. Máximo 1 MiB y 1.000 registros. La confirmación guarda las filas válidas; las repetidas no se sobrescriben.</p>
+<p>Cabeceras obligatorias: source, external_id, company, role. Opcionales: url, location, work_mode, technologies. Modalidades: UNSPECIFIED, REMOTE, HYBRID, ONSITE.</p>
+<p>¿Quieres probarlo? <a th:href="@{/imports/template}">Descargar plantilla CSV de prueba</a>. Incluye dos ofertas ficticias válidas. Puedes añadir otra fila con una combinación nueva de <code>source</code> y <code>external_id</code>, conservar las cabeceras y volver a subir el archivo para previsualizarlo.</p>
+<p class="error-summary" role="alert" th:if="${importError}" th:text="${importError}"></p>
+<form class="panel" th:action="@{/imports/preview}" method="post" enctype="multipart/form-data"><label for="file">Archivo CSV UTF-8</label><input id="file" name="file" type="file" accept=".csv,text/csv" required><button class="btn" type="submit">Previsualizar</button></form>
+<section th:if="${report}"><h2>Resultado por registro</h2><p role="alert" th:if="${report.stopped}">El almacenamiento falló. Revisa lo confirmado y vuelve a previsualizar el archivo para completar las filas pendientes.</p>
+<div class="table-scroll"><table><thead><tr><th>Registro</th><th>Empresa</th><th>Puesto</th><th>Resultado</th><th>Motivo</th></tr></thead><tbody><tr th:each="row : ${report.rows}"><td th:text="${row.number}"></td><td th:text="${row.company}"></td><td th:text="${row.role}"></td><td th:text="${row.outcome}"></td><td th:text="${row.reason}"></td></tr></tbody></table></div>
+<form th:if="${confirmable}" th:action="@{/imports/confirm}" method="post"><p>La previsualización caduca a los 15 minutos. Se volverá a comprobar el estado antes de guardar.</p><button class="btn" type="submit">Confirmar filas válidas</button></form></section>
+</main></html>

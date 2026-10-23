@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+**/target/
+/backups/
+/reports/
+*.dump
+*.hprof
+/.idea/
+/.vscode/
+*.log
+*.iml

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Acceder · Job Application Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="login-shell">
+<main id="main" class="login-layout">
+    <div class="login-brand"><span class="brand-icon" aria-hidden="true">J</span><span>Job Tracker</span></div>
+    <section class="login-panel" aria-labelledby="access-title">
+        <h1 id="access-title">Acceso personal</h1><p class="muted">Gestiona tus candidaturas, entrevistas y próximos pasos.</p>
+        <p th:if="${param.error}" class="notice error" role="alert">Usuario o contraseña incorrectos.</p>
+        <p th:if="${param.logout}" class="notice" role="status">Has cerrado la sesión.</p>
+        <form th:action="@{/login}" method="post" class="stack">
+            <label for="username">Usuario</label><input id="username" name="username" autocomplete="username" required autofocus>
+            <label for="password">Contraseña</label><input id="password" name="password" type="password" autocomplete="current-password" required>
+            <button class="btn btn-primary" type="submit">Entrar</button>
+        </form>
+    </section>
+    <p class="login-caption">Entorno local · Uso personal</p>
+</main>
+</body>
+</html>

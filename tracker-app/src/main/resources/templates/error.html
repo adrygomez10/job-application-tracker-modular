@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: page('Revisa esta operación', ~{::main}, null)}">
+<body>
+<main id="main" class="container">
+    <header class="page-heading">
+        <h1 class="page-title" th:text="${errorStatus ?: status ?: 'Error'}"></h1>
+        <p class="notice error" role="alert"
+           th:text="${errorCode != null ? #messages.msg('error.' + errorCode) : 'No se ha podido completar la operación. Revisa los datos o vuelve a intentarlo más tarde.'}"></p>
+        <a class="btn btn-primary" th:href="@{/applications}">Volver a las candidaturas</a>
+    </header>
+</main>
+</body>
+</html>

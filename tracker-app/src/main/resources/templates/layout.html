@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:fragment="page(pageTitle, content, activeSection)">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title th:text="${pageTitle} + ' · Job Application Tracker'">Job Application Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="app-shell">
+<a class="skip-link" href="#main">Saltar al contenido</a>
+<aside class="sidebar" aria-label="Menú principal">
+    <a class="brand" th:href="@{/}"><span class="brand-icon" aria-hidden="true">J</span><span>Job Tracker<small>Gestión de candidaturas</small></span></a>
+    <nav class="nav-links" aria-label="Navegación principal">
+        <a class="nav-link" th:href="@{/}" th:attr="aria-current=${activeSection == 'dashboard' ? 'page' : null}"><span class="nav-icon" aria-hidden="true">▦</span>Resumen</a>
+        <a class="nav-link" th:href="@{/applications}" th:attr="aria-current=${activeSection == 'applications' ? 'page' : null}"><span class="nav-icon" aria-hidden="true">▤</span>Candidaturas</a>
+        <a class="nav-link" th:href="@{/agenda}" th:attr="aria-current=${activeSection == 'agenda' ? 'page' : null}"><span class="nav-icon" aria-hidden="true">▦</span>Agenda</a>
+<a class="nav-link" th:href="@{/imports}" th:attr="aria-current=${activeSection == 'imports' ? 'page' : null}">Importar ofertas</a>
+<a class="nav-link" th:href="@{/exports}" th:attr="aria-current=${activeSection == 'exports' ? 'page' : null}">Exportaciones</a>
+<a class="nav-link" th:href="@{/reminders}" th:attr="aria-current=${activeSection == 'reminders' ? 'page' : null}">Recordatorios</a>
+<a class="nav-link" th:href="@{/insights}" th:attr="aria-current=${activeSection == 'insights' ? 'page' : null}">Estadísticas</a>
+    </nav>
+    <p class="sidebar-note">Espacio personal<br><span>Organiza cada proceso de selección.</span></p>
+</aside>
+<div class="workspace">
+    <header class="topbar"><span class="topbar-title" th:text="${pageTitle}">Resumen</span><div class="account-actions"><span class="local-indicator">Entorno local</span><form th:action="@{/logout}" method="post"><button class="logout" type="submit">Cerrar sesión</button></form></div></header>
+    <main th:replace="${content}"></main>
+    <footer class="site-footer"><span>Job Application Tracker</span><span th:text="${zone}">Zona horaria</span></footer>
+</div>
+</body>
+</html>

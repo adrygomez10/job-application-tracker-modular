@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: page(${editing ? 'Editar candidatura' : 'Guardar oferta'}, ~{::main}, 'applications')}">
+<body>
+<main id="main" class="container">
+    <header class="page-heading">
+        <h1 class="page-title" th:text="${editing ? 'Editar candidatura' : 'Guardar una oferta'}"></h1>
+        <p>Empresa y puesto son obligatorios. Completa el resto cuando lo necesites.</p>
+    </header>
+
+    <form th:action="${editing ? '/applications/' + form.id + '/edit' : '/applications'}" th:object="${form}"
+          method="post" class="stack form-panel">
+        <p th:if="${rule}" class="notice error" role="alert" th:text="${#messages.msg('error.' + rule)}"></p>
+        <div th:if="${#fields.hasAnyErrors()}" class="notice error" role="alert">
+            <p>Revisa los campos señalados.</p>
+            <ul><li th:each="e : ${#fields.allErrors()}" th:text="${e}"></li></ul>
+        </div>
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{version}">
+
+        <div class="form-grid">
+            <div>
+                <label for="company">Empresa *</label>
+                <input th:field="*{company}" required maxlength="160" autocomplete="organization">
+            </div>
+            <div>
+                <label for="role">Puesto *</label>
+                <input th:field="*{role}" required maxlength="180">
+            </div>
+            <div>
+                <label for="url">Enlace de la oferta</label>
+                <input th:field="*{url}" type="url" maxlength="2000" placeholder="https://…">
+            </div>
+            <div>
+                <label for="source">Plataforma de origen</label>
+                <input th:field="*{source}" maxlength="160" placeholder="LinkedIn, InfoJobs…">
+            </div>
+            <div>
+                <label for="location">Ubicación</label>
+                <input th:field="*{location}" maxlength="160">
+            </div>
+            <div>
+                <label for="workMode">Modalidad</label>
+                <select th:field="*{workMode}">
+                    <option th:each="m : ${workModes}" th:value="${m}" th:text="${#messages.msg('mode.' + m)}"></option>
+                </select>
+            </div>
+        </div>
+
+        <label for="technologies">Tecnologías</label>
+        <input th:field="*{technologies}" maxlength="500" placeholder="Java, Spring, PostgreSQL…">
+        <label for="contact">Contacto</label>
+        <input th:field="*{contact}" maxlength="500" placeholder="Nombre, correo o teléfono">
+        <label for="notes">Notas generales</label>
+        <textarea th:field="*{notes}" rows="5" maxlength="10000"></textarea>
+
+        <fieldset th:unless="${editing}">
+            <legend>Situación actual</legend>
+            <div class="form-grid">
+                <div>
+                    <label for="status">Estado</label>
+                    <select th:field="*{status}">
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${#messages.msg('status.' + s)}"></option>
+                    </select>
+                </div>
+                <div>
+                    <label for="appliedOn">Fecha de solicitud</label>
+                    <input type="date" th:field="*{appliedOn}" th:max="${today}">
+                    <p class="hint">Vacía para una oferta guardada.</p>
+                </div>
+            </div>
+        </fieldset>
+        <div th:if="${editing}">
+            <input type="hidden" th:field="*{status}">
+            <input type="hidden" th:field="*{appliedOn}">
+            <p class="hint">El estado se actualiza desde la ficha para conservar su historial.</p>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a th:href="${editing ? '/applications/' + form.id : '/applications'}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>
