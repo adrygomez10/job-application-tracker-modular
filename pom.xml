@@ -29,7 +29,7 @@
     <playwright.version>1.64.0</playwright.version>
     <skipITs>false</skipITs>
     <spotless.version>3.10.4</spotless.version>
-    <google-java-format.version>1.31.0</google-java-format.version>
+    <eclipse-jdt.version>4.39</eclipse-jdt.version>
     <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
     <checkstyle.version>14.3.0</checkstyle.version>
     <pmd-plugin.version>3.28.0</pmd-plugin.version>
@@ -73,14 +73,18 @@
         <version>${spotless.version}</version>
         <configuration>
           <lineEndings>UNIX</lineEndings>
+          <upToDateChecking>
+            <enabled>false</enabled>
+          </upToDateChecking>
           <java>
-            <googleJavaFormat>
-              <version>${google-java-format.version}</version>
-              <style>GOOGLE</style>
-            </googleJavaFormat>
+            <eclipse>
+              <version>${eclipse-jdt.version}</version>
+              <file>${maven.multiModuleProjectDirectory}/config/eclipse-formatter.xml</file>
+            </eclipse>
             <removeUnusedImports/>
             <forbidWildcardImports/>
-            <formatAnnotations/>
+            <trimTrailingWhitespace/>
+            <endWithNewline/>
           </java>
           <pom>
             <sortPom/>
@@ -101,7 +105,7 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${checkstyle-plugin.version}</version>
         <configuration>
-          <configLocation>${maven.multiModuleProjectDirectory}/config/checkstyle.xml</configLocation>
+          <configLocation>${maven.multiModuleProjectDirectory}/config/checkstyle-clean-code.xml</configLocation>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <consoleOutput>true</consoleOutput>
           <failOnViolation>true</failOnViolation>

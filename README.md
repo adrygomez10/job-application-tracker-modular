@@ -52,7 +52,9 @@ bash scripts/quality.sh
 bash scripts/test.sh
 ```
 
-También están disponibles `make quality` y `make test`. Se comprueban Spotless, Google Java Style, Checkstyle, PMD, duplicados entre módulos, fronteras con ArchUnit y cobertura con JaCoCo. Los informes se generan por módulo bajo `target/`; GitHub Actions ejecuta los mismos scripts.
+También están disponibles `make quality` y `make test`. Se comprueban Spotless con el perfil de estilo del proyecto, Checkstyle, PMD, duplicados entre módulos, fronteras con ArchUnit y cobertura con JaCoCo. Los informes se generan por módulo bajo `target/`; GitHub Actions ejecuta los mismos scripts.
+
+El [perfil de estilo inspirado en Clean Code](docs/code-style.md) combina `config/checkstyle-clean-code.xml` y `config/eclipse-formatter.xml`: cuatro espacios, hasta 120 columnas, llaves de métodos y constructores en la línea siguiente y cadenas multilínea con una llamada por línea. Maven lo aplica y comprueba sin depender de un IDE. Para verificar solo el estilo: `docker compose -f compose.style.yaml run --rm --no-deps check`. Para corregirlo: `docker compose -f compose.style.yaml run --rm --no-deps format`. La guía incluye la instalación del hook de precommit y los comandos del Maven Wrapper.
 
 Para aplicar el formato de manera explícita: `docker compose -f compose.quality.yaml run --rm --build format` o `make format`.
 

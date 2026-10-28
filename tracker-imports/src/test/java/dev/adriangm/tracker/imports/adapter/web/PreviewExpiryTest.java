@@ -20,30 +20,30 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ExtendedModelMap;
 
 class PreviewExpiryTest {
-  @Test
-  void expiredPreviewCannotBeConfirmed() throws Exception {
-    var imports =
-        new ImportService(
+    @Test
+    void expiredPreviewCannotBeConfirmed() throws Exception
+    {
+        var imports = new ImportService(
             new CsvOfferSource(),
             new ImportPipeline(List.of(new NormalizeFields(), new RequireFields())),
             (source, id) -> Optional.empty(),
             entry -> {
-              throw new AssertionError("Expired preview must not write");
-            });
-    var now = Instant.parse("2026-10-23T10:00:00Z");
-    var session = new MockHttpSession();
-    var file =
-        new MockMultipartFile(
+                throw new AssertionError("Expired preview must not write");
+            }
+        );
+        var now = Instant.parse("2026-10-23T10:00:00Z");
+        var session = new MockHttpSession();
+        var file = new MockMultipartFile(
             "file",
             "offers.csv",
             "text/csv",
-            "source,external_id,company,role\ndemo,1,Example,Java\n"
-                .getBytes(StandardCharsets.UTF_8));
-    new ImportController(imports, Clock.fixed(now, ZoneOffset.UTC))
-        .preview(file, session, new ExtendedModelMap(), new MockHttpServletResponse());
-    var response = new MockHttpServletResponse();
-    new ImportController(imports, Clock.fixed(now.plusSeconds(900), ZoneOffset.UTC))
-        .confirm(session, new ExtendedModelMap(), response);
-    assertThat(response.getStatus()).isEqualTo(400);
-  }
+            "source,external_id,company,role\ndemo,1,Example,Java\n".getBytes(StandardCharsets.UTF_8)
+        );
+        new ImportController(imports, Clock.fixed(now, ZoneOffset.UTC))
+            .preview(file, session, new ExtendedModelMap(), new MockHttpServletResponse());
+        var response = new MockHttpServletResponse();
+        new ImportController(imports, Clock.fixed(now.plusSeconds(900), ZoneOffset.UTC))
+            .confirm(session, new ExtendedModelMap(), response);
+        assertThat(response.getStatus()).isEqualTo(400);
+    }
 }

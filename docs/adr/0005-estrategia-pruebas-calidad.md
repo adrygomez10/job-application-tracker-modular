@@ -13,7 +13,7 @@ Arrancar y verificar el proyecto solo debe requerir Git y Docker. Hay que compro
 - Un contrato de `ApplicationStore` que se ejecuta contra la implementación en memoria y contra PostgreSQL.
 - Integración separada por riesgo: `JpaApplicationStoreIT`, `PersistenceIT` (transacciones, concurrencia y consultas), `WebIT` (HTTP y seguridad) y `BrowserWorkflowIT` (Playwright con Chromium).
 - PostgreSQL real en una base temporal de Docker Compose; JaCoCo para informes de cobertura.
-- Spotless (Google Java Style), Checkstyle, PMD y CPD obligatorios en producción y tests. Cualquier infracción hace fallar la construcción.
+- Spotless con el [perfil de estilo del proyecto](../code-style.md), Checkstyle, PMD y CPD obligatorios en producción y tests. Cualquier infracción hace fallar la construcción.
 - El CI ejecuta los mismos scripts que el entorno local.
 
 ## Alternativas consideradas

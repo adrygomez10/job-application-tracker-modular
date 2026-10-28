@@ -7,8 +7,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class CsvPluginConfiguration {
-  @Bean
-  ExportPlugin csvExportPlugin() {
-    return new CsvExportPlugin();
-  }
+    @Bean
+    ExportPlugin csvExportPlugin()
+    {
+        return new CsvExportPlugin();
+    }
 }

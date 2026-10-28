@@ -4,13 +4,14 @@ import java.time.Instant;
 import java.util.List;
 
 public interface ReminderStore {
-  void refresh(List<Reminder> reminders, Instant checkedAt);
+    void refresh(List<Reminder> reminders, Instant checkedAt);
 
-  Snapshot snapshot();
+    Snapshot snapshot();
 
-  record Snapshot(List<Reminder> active, Instant checkedAt) {
-    public Snapshot {
-      active = List.copyOf(active);
+    record Snapshot(List<Reminder> active, Instant checkedAt) {
+        public Snapshot
+        {
+            active = List.copyOf(active);
+        }
     }
-  }
 }

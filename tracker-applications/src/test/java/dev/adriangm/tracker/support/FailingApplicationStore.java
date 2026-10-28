@@ -7,24 +7,28 @@ import java.util.UUID;
 
 /** Reads from another store and fails every write, as an unavailable database would. */
 public final class FailingApplicationStore implements ApplicationStore {
-  private final ApplicationStore reads;
+    private final ApplicationStore reads;
 
-  public FailingApplicationStore(ApplicationStore reads) {
-    this.reads = reads;
-  }
+    public FailingApplicationStore(ApplicationStore reads)
+    {
+        this.reads = reads;
+    }
 
-  @Override
-  public Optional<JobApplication> find(UUID id) {
-    return reads.find(id);
-  }
+    @Override
+    public Optional<JobApplication> find(UUID id)
+    {
+        return reads.find(id);
+    }
 
-  @Override
-  public JobApplication create(JobApplication application) {
-    throw new IllegalStateException("Storage unavailable");
-  }
+    @Override
+    public JobApplication create(JobApplication application)
+    {
+        throw new IllegalStateException("Storage unavailable");
+    }
 
-  @Override
-  public JobApplication save(JobApplication application, long expectedVersion) {
-    throw new IllegalStateException("Storage unavailable");
-  }
+    @Override
+    public JobApplication save(JobApplication application, long expectedVersion)
+    {
+        throw new IllegalStateException("Storage unavailable");
+    }
 }

@@ -8,17 +8,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class InsightsController {
-  private final ApplicationsApi applications;
+    private final ApplicationsApi applications;
 
-  public InsightsController(ApplicationsApi applications) {
-    this.applications = applications;
-  }
+    public InsightsController(ApplicationsApi applications)
+    {
+        this.applications = applications;
+    }
 
-  @GetMapping("/insights")
-  String show(Model model) {
-    var statistics = applications.statistics();
-    model.addAttribute("statistics", statistics);
-    model.addAttribute("rate", Insights.interviewRate(statistics));
-    return "insights";
-  }
+    @GetMapping("/insights")
+    String show(Model model)
+    {
+        var statistics = applications.statistics();
+        model.addAttribute("statistics", statistics);
+        model.addAttribute("rate", Insights.interviewRate(statistics));
+        return "insights";
+    }
 }

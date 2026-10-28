@@ -5,11 +5,12 @@ import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 
 final class ArchitectureClasses {
-  static final JavaClasses ALL =
-      new ClassFileImporter()
-          .withImportOption(new ImportOption.DoNotIncludeTests())
-          .withImportOption(location -> !location.toString().contains("-tests.jar"))
-          .importPackages("dev.adriangm.tracker");
+    static final JavaClasses ALL = new ClassFileImporter()
+        .withImportOption(new ImportOption.DoNotIncludeTests())
+        .withImportOption(location -> !location.toString().contains("-tests.jar"))
+        .importPackages("dev.adriangm.tracker");
 
-  private ArchitectureClasses() {}
+    private ArchitectureClasses()
+    {
+    }
 }

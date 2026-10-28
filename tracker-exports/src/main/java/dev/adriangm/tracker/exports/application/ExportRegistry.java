@@ -7,30 +7,35 @@ import java.util.List;
 import java.util.Map;
 
 public final class ExportRegistry {
-  private final Map<String, ExportPlugin> plugins;
+    private final Map<String, ExportPlugin> plugins;
 
-  public ExportRegistry(List<ExportPlugin> exporters) {
-    var registered = new LinkedHashMap<String, ExportPlugin>();
-    for (ExportPlugin plugin : exporters) {
-      if (registered.putIfAbsent(plugin.descriptor().id(), plugin) != null) {
-        throw new IllegalArgumentException("Duplicate export plugin: " + plugin.descriptor().id());
-      }
+    public ExportRegistry(List<ExportPlugin> exporters)
+    {
+        var registered = new LinkedHashMap<String, ExportPlugin>();
+        for (ExportPlugin plugin : exporters) {
+            if (registered.putIfAbsent(plugin.descriptor().id(), plugin) != null) {
+                throw new IllegalArgumentException("Duplicate export plugin: " + plugin.descriptor().id());
+            }
+        }
+        plugins = Map.copyOf(registered);
     }
-    plugins = Map.copyOf(registered);
-  }
 
-  public List<ExportDescriptor> descriptors() {
-    return plugins.values().stream()
-        .map(ExportPlugin::descriptor)
-        .sorted(java.util.Comparator.comparing(ExportDescriptor::id))
-        .toList();
-  }
-
-  public ExportPlugin require(String id) {
-    ExportPlugin plugin = plugins.get(id);
-    if (plugin == null) {
-      throw new IllegalArgumentException("Unknown export plugin");
+    public List<ExportDescriptor> descriptors()
+    {
+        return plugins
+            .values()
+            .stream()
+            .map(ExportPlugin::descriptor)
+            .sorted(java.util.Comparator.comparing(ExportDescriptor::id))
+            .toList();
     }
-    return plugin;
-  }
+
+    public ExportPlugin require(String id)
+    {
+        ExportPlugin plugin = plugins.get(id);
+        if (plugin == null) {
+            throw new IllegalArgumentException("Unknown export plugin");
+        }
+        return plugin;
+    }
 }

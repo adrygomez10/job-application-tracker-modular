@@ -7,37 +7,44 @@ import java.time.Instant;
 import java.util.List;
 
 public final class InterviewsDataset implements DatasetSource {
-  private final ApplicationsApi applications;
-  private final Clock clock;
+    private final ApplicationsApi applications;
+    private final Clock clock;
 
-  public InterviewsDataset(ApplicationsApi applications, Clock clock) {
-    this.applications = applications;
-    this.clock = clock;
-  }
+    public InterviewsDataset(ApplicationsApi applications, Clock clock)
+    {
+        this.applications = applications;
+        this.clock = clock;
+    }
 
-  @Override
-  public String dataset() {
-    return "interviews";
-  }
+    @Override
+    public String dataset()
+    {
+        return "interviews";
+    }
 
-  @Override
-  public ExportData load(ApplicationsApi.Filter filter, Instant from, Instant until) {
-    var rows =
-        applications.interviews(from, until).stream()
+    @Override
+    public ExportData load(ApplicationsApi.Filter filter, Instant from, Instant until)
+    {
+        var rows = applications
+            .interviews(from, until)
+            .stream()
             .map(
-                row ->
-                    List.of(
+                row -> List
+                    .of(
                         row.id().toString(),
                         row.title(),
                         row.company(),
                         row.startsAt().toString(),
                         row.location(),
-                        row.url()))
+                        row.url()
+                    )
+            )
             .toList();
-    return new ExportData(
-        dataset(),
-        List.of("id", "title", "company", "starts_at", "location", "url"),
-        rows,
-        clock.instant());
-  }
+        return new ExportData(
+            dataset(),
+            List.of("id", "title", "company", "starts_at", "location", "url"),
+            rows,
+            clock.instant()
+        );
+    }
 }

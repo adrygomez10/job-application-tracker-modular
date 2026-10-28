@@ -17,21 +17,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 class ReminderJobTest {
-  @Test
-  void failedJobPreservesStorageAndNextSuccessfulRunClearsFailure() {
-    var applications = mock(ApplicationsApi.class);
-    var store = mock(ReminderStore.class);
-    var clock = Clock.fixed(Instant.EPOCH, ZoneOffset.UTC);
-    when(applications.openActivities())
-        .thenThrow(new DataAccessResourceFailureException("Test failure"))
-        .thenReturn(List.of());
-    var job =
-        new ReminderJob(
-            new RefreshReminders(applications, new ReminderPolicy(clock), store, clock));
-    job.run();
-    assertThat(job.failed()).isTrue();
-    verifyNoInteractions(store);
-    job.run();
-    assertThat(job.failed()).isFalse();
-  }
+    @Test
+    void failedJobPreservesStorageAndNextSuccessfulRunClearsFailure()
+    {
+        var applications = mock(ApplicationsApi.class);
+        var store = mock(ReminderStore.class);
+        var clock = Clock.fixed(Instant.EPOCH, ZoneOffset.UTC);
+        when(applications.openActivities())
+            .thenThrow(new DataAccessResourceFailureException("Test failure"))
+            .thenReturn(List.of());
+        var job = new ReminderJob(new RefreshReminders(applications, new ReminderPolicy(clock), store, clock));
+        job.run();
+        assertThat(job.failed()).isTrue();
+        verifyNoInteractions(store);
+        job.run();
+        assertThat(job.failed()).isFalse();
+    }
 }

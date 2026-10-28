@@ -5,4 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 interface ApplicationJpaRepository
-    extends JpaRepository<ApplicationRow, UUID>, JpaSpecificationExecutor<ApplicationRow> {}
+    extends
+        JpaRepository<ApplicationRow, UUID>,
+        JpaSpecificationExecutor<ApplicationRow> {
+}

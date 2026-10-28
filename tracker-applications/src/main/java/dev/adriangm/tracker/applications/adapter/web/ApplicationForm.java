@@ -29,44 +29,49 @@ public record ApplicationForm(
     @Size(max = 500) String contact,
     @Size(max = 10000) String notes,
     @NotNull Status status,
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate appliedOn) {
-  public static ApplicationForm empty() {
-    return new ApplicationForm(
-        UUID.randomUUID(),
-        0,
-        "",
-        "",
-        "",
-        "",
-        "",
-        WorkMode.UNSPECIFIED,
-        "",
-        "",
-        "",
-        Status.SAVED,
-        null);
-  }
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate appliedOn
+) {
+    public static ApplicationForm empty()
+    {
+        return new ApplicationForm(
+            UUID.randomUUID(),
+            0,
+            "",
+            "",
+            "",
+            "",
+            "",
+            WorkMode.UNSPECIFIED,
+            "",
+            "",
+            "",
+            Status.SAVED,
+            null
+        );
+    }
 
-  public static ApplicationForm from(JobApplication application) {
-    var details = application.details();
-    return new ApplicationForm(
-        application.id(),
-        application.version(),
-        details.company(),
-        details.role(),
-        details.url(),
-        details.source(),
-        details.location(),
-        details.workMode(),
-        details.technologies(),
-        details.contact(),
-        details.notes(),
-        application.status(),
-        application.appliedOn());
-  }
+    public static ApplicationForm from(JobApplication application)
+    {
+        var details = application.details();
+        return new ApplicationForm(
+            application.id(),
+            application.version(),
+            details.company(),
+            details.role(),
+            details.url(),
+            details.source(),
+            details.location(),
+            details.workMode(),
+            details.technologies(),
+            details.contact(),
+            details.notes(),
+            application.status(),
+            application.appliedOn()
+        );
+    }
 
-  public ApplicationDetails details() {
-    return new ApplicationDetails(
-        company, role, url, source, location, workMode, technologies, contact, notes);
-  }
+    public ApplicationDetails details()
+    {
+        return new ApplicationDetails(company, role, url, source, location, workMode, technologies, contact, notes);
+    }
 }

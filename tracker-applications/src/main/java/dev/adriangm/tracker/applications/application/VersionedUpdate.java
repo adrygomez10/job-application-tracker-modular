@@ -10,23 +10,24 @@ import java.util.function.UnaryOperator;
  * model decide and save the result in one unit of work. An operation without effect saves nothing.
  */
 public final class VersionedUpdate {
-  private final ApplicationStore store;
-  private final UnitOfWork work;
+    private final ApplicationStore store;
+    private final UnitOfWork work;
 
-  public VersionedUpdate(ApplicationStore store, UnitOfWork work) {
-    this.store = Objects.requireNonNull(store);
-    this.work = Objects.requireNonNull(work);
-  }
+    public VersionedUpdate(ApplicationStore store, UnitOfWork work)
+    {
+        this.store = Objects.requireNonNull(store);
+        this.work = Objects.requireNonNull(work);
+    }
 
-  public JobApplication apply(UUID id, long version, UnaryOperator<JobApplication> change) {
-    return work.required(
-        () -> {
-          var current = store.find(id).orElseThrow(RecordMissing::new);
-          if (current.version() != version) {
-            throw new EditConflict();
-          }
-          var changed = change.apply(current);
-          return changed.equals(current) ? current : store.save(changed, version);
+    public JobApplication apply(UUID id, long version, UnaryOperator<JobApplication> change)
+    {
+        return work.required(() -> {
+            var current = store.find(id).orElseThrow(RecordMissing::new);
+            if (current.version() != version) {
+                throw new EditConflict();
+            }
+            var changed = change.apply(current);
+            return changed.equals(current) ? current : store.save(changed, version);
         });
-  }
+    }
 }

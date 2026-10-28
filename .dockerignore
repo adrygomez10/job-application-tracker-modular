@@ -9,3 +9,4 @@ reports
 backups
 .idea
 .vscode
+.venv-style/

@@ -16,67 +16,60 @@ import org.junit.jupiter.api.Test;
  * interface and inherits the tests.
  */
 public interface ApplicationStoreContract {
-  ApplicationStore store();
+    ApplicationStore store();
 
-  UnitOfWork work();
+    UnitOfWork work();
 
-  @Test
-  default void missingRecordIsAnEmptyOptional() {
-    work()
-        .required(
-            () -> {
-              assertThat(store().find(UUID.randomUUID())).isEmpty();
-              return null;
-            });
-  }
+    @Test
+    default void missingRecordIsAnEmptyOptional()
+    {
+        work().required(() -> {
+            assertThat(store().find(UUID.randomUUID())).isEmpty();
+            return null;
+        });
+    }
 
-  @Test
-  default void createdRecordRoundTripsWithoutLeakingMutation() {
-    work()
-        .required(
-            () -> {
-              var application = store().create(saved());
-              assertThat(store().find(application.id())).contains(application);
-              return null;
-            });
-  }
+    @Test
+    default void createdRecordRoundTripsWithoutLeakingMutation()
+    {
+        work().required(() -> {
+            var application = store().create(saved());
+            assertThat(store().find(application.id())).contains(application);
+            return null;
+        });
+    }
 
-  @Test
-  default void saveIncrementsVersionAndKeepsHistory() {
-    work()
-        .required(
-            () -> {
-              var application = store().create(saved());
-              var next =
-                  store().save(application.addNote("Contract note", NOW), application.version());
-              assertThat(next.version()).isEqualTo(application.version() + 1);
-              assertThat(store().find(application.id()).orElseThrow().timeline()).hasSize(2);
-              return null;
-            });
-  }
+    @Test
+    default void saveIncrementsVersionAndKeepsHistory()
+    {
+        work().required(() -> {
+            var application = store().create(saved());
+            var next = store().save(application.addNote("Contract note", NOW), application.version());
+            assertThat(next.version()).isEqualTo(application.version() + 1);
+            assertThat(store().find(application.id()).orElseThrow().timeline()).hasSize(2);
+            return null;
+        });
+    }
 
-  @Test
-  default void staleVersionIsRejected() {
-    work()
-        .required(
-            () -> {
-              var application = store().create(saved());
-              store().save(application.addNote("First", NOW), 0);
-              assertThatThrownBy(() -> store().save(application.addNote("Stale", NOW), 0))
-                  .isInstanceOf(EditConflict.class);
-              return null;
-            });
-  }
+    @Test
+    default void staleVersionIsRejected()
+    {
+        work().required(() -> {
+            var application = store().create(saved());
+            store().save(application.addNote("First", NOW), 0);
+            assertThatThrownBy(() -> store().save(application.addNote("Stale", NOW), 0))
+                .isInstanceOf(EditConflict.class);
+            return null;
+        });
+    }
 
-  @Test
-  default void duplicateIdentityIsRejected() {
-    work()
-        .required(
-            () -> {
-              var application = store().create(saved());
-              assertThatThrownBy(() -> store().create(application))
-                  .isInstanceOf(EditConflict.class);
-              return null;
-            });
-  }
+    @Test
+    default void duplicateIdentityIsRejected()
+    {
+        work().required(() -> {
+            var application = store().create(saved());
+            assertThatThrownBy(() -> store().create(application)).isInstanceOf(EditConflict.class);
+            return null;
+        });
+    }
 }

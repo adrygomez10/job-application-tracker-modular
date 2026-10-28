@@ -18,76 +18,89 @@ import java.util.UUID;
  * own read-only transaction and never return null.
  */
 public interface ApplicationQueries {
-  int PAGE_SIZE = 20;
+    int PAGE_SIZE = 20;
 
-  Results search(Criteria criteria);
+    Results search(Criteria criteria);
 
-  Optional<JobApplication> detail(UUID id);
+    Optional<JobApplication> detail(UUID id);
 
-  StatusCounts counts();
+    StatusCounts counts();
 
-  List<UpcomingInterview> upcomingInterviews(Instant from, int limit);
+    List<UpcomingInterview> upcomingInterviews(Instant from, int limit);
 
-  List<UpcomingInterview> interviewsAwaitingResult(Instant before, int limit);
+    List<UpcomingInterview> interviewsAwaitingResult(Instant before, int limit);
 
-  List<PendingTask> pendingTasks(int limit);
+    List<PendingTask> pendingTasks(int limit);
 
-  record Criteria(
-      String query,
-      Status status,
-      WorkMode workMode,
-      LocalDate from,
-      LocalDate to,
-      boolean archived,
-      int page) {
-    public Criteria {
-      query = query == null ? "" : query.strip();
-      if (query.length() > 180 || page < 0 || isReversedRange(from, to)) {
-        throw new InvalidCriteria();
-      }
+    record Criteria(
+        String query,
+        Status status,
+        WorkMode workMode,
+        LocalDate from,
+        LocalDate to,
+        boolean archived,
+        int page
+    ) {
+        public Criteria
+        {
+            query = query == null ? "" : query.strip();
+            if (query.length() > 180 || page < 0 || isReversedRange(from, to)) {
+                throw new InvalidCriteria();
+            }
+        }
+
+        private static boolean isReversedRange(LocalDate from, LocalDate to)
+        {
+            return from != null && to != null && from.isAfter(to);
+        }
     }
 
-    private static boolean isReversedRange(LocalDate from, LocalDate to) {
-      return from != null && to != null && from.isAfter(to);
-    }
-  }
-
-  record Summary(
-      UUID id,
-      String company,
-      String role,
-      Status status,
-      WorkMode workMode,
-      LocalDate appliedOn,
-      Instant updatedAt) {}
-
-  record Results(List<Summary> items, long total, int page, int totalPages) {}
-
-  /** Applications per status, excluding archived ones, in declaration order. */
-  record StatusCounts(Map<Status, Long> byStatus) {
-    public StatusCounts {
-      var complete = new EnumMap<Status, Long>(Status.class);
-      for (Status status : Status.values()) {
-        complete.put(status, byStatus.getOrDefault(status, 0L));
-      }
-      byStatus = Collections.unmodifiableMap(complete);
+    record Summary(
+        UUID id,
+        String company,
+        String role,
+        Status status,
+        WorkMode workMode,
+        LocalDate appliedOn,
+        Instant updatedAt
+    ) {
     }
 
-    public long of(Status status) {
-      return byStatus.get(status);
+    record Results(List<Summary> items, long total, int page, int totalPages) {
     }
 
-    public long active() {
-      return byStatus.entrySet().stream()
-          .filter(entry -> entry.getKey().active())
-          .mapToLong(Map.Entry::getValue)
-          .sum();
+    /** Applications per status, excluding archived ones, in declaration order. */
+    record StatusCounts(Map<Status, Long> byStatus) {
+        public StatusCounts
+        {
+            var complete = new EnumMap<Status, Long>(Status.class);
+
+            for (Status status : Status.values()) {
+                complete.put(status, byStatus.getOrDefault(status, 0L));
+            }
+
+            byStatus = Collections.unmodifiableMap(complete);
+        }
+
+        public long of(Status status)
+        {
+            return byStatus.get(status);
+        }
+
+        public long active()
+        {
+            return byStatus
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().active())
+                .mapToLong(Map.Entry::getValue)
+                .sum();
+        }
     }
-  }
 
-  record UpcomingInterview(
-      UUID applicationId, String company, String role, String title, Instant startsAt) {}
+    record UpcomingInterview(UUID applicationId, String company, String role, String title, Instant startsAt) {
+    }
 
-  record PendingTask(
-      UUID applicationId, String company, String role, String title, LocalDate dueOn) {}
+    record PendingTask(UUID applicationId, String company, String role, String title, LocalDate dueOn) {
+    }
 }

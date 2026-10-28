@@ -6,15 +6,17 @@ import dev.adriangm.tracker.support.Fixtures;
 import dev.adriangm.tracker.support.MemoryApplicationStore;
 
 class MemoryApplicationStoreTest implements ApplicationStoreContract {
-  final ApplicationStore store = new MemoryApplicationStore();
+    final ApplicationStore store = new MemoryApplicationStore();
 
-  @Override
-  public ApplicationStore store() {
-    return store;
-  }
+    @Override
+    public ApplicationStore store()
+    {
+        return store;
+    }
 
-  @Override
-  public UnitOfWork work() {
-    return Fixtures.DIRECT;
-  }
+    @Override
+    public UnitOfWork work()
+    {
+        return Fixtures.DIRECT;
+    }
 }
