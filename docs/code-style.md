@@ -83,7 +83,9 @@ La configuración versionada no instala el hook en otros equipos: cada desarroll
 
 ## Integración continua y alcance
 
-El workflow existente ejecuta las tareas de calidad y pruebas del proyecto. Sus ejecuciones Maven alcanzan la fase `validate`, que obliga a pasar el mismo perfil sobre fuentes y pruebas Java. Las reglas nuevas no dependen de una configuración personal del editor.
+El workflow `Verify` incluye el job independiente `Code style`, visible en las pull requests como `Verify / Code style`. Ejecuta `docker compose -f compose.style.yaml run --rm --no-deps check`, el mismo comando del precommit, sobre las fuentes y pruebas Java de todos los módulos. Se ejecuta en paralelo con `tests` y devuelve su propio resultado; un incumplimiento hace fallar este check.
+
+Las tareas completas de calidad y pruebas siguen ejecutándose en `tests`. Sus ejecuciones Maven también alcanzan `validate`, por lo que conservan la comprobación del perfil.
 
 Modificar una regla exige sincronizar Checkstyle y el formateador, aplicar el formato y verificar ejemplos correctos e incorrectos. La migración de estilo se revisa separadamente de los cambios de comportamiento. Las reglas de diseño, las pruebas funcionales y los estándares de otros proyectos mantienen su alcance propio.
 
