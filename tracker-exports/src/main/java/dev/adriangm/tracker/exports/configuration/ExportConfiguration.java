@@ -13,13 +13,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ExportConfiguration {
-  @Bean
-  ExportService exportService(
-      List<ExportPlugin> plugins, ApplicationsApi applications, Clock clock) {
-    return new ExportService(
-        new ExportRegistry(plugins),
-        List.of(
-            new ApplicationsDataset(applications, clock),
-            new InterviewsDataset(applications, clock)));
-  }
+    @Bean
+    ExportService exportService(List<ExportPlugin> plugins, ApplicationsApi applications, Clock clock)
+    {
+        return new ExportService(
+            new ExportRegistry(plugins),
+            List.of(new ApplicationsDataset(applications, clock), new InterviewsDataset(applications, clock))
+        );
+    }
 }

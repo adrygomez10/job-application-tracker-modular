@@ -5,7 +5,7 @@ import dev.adriangm.tracker.exports.api.ExportData;
 import java.time.Instant;
 
 public interface DatasetSource {
-  String dataset();
+    String dataset();
 
-  ExportData load(Filter filter, Instant from, Instant until);
+    ExportData load(Filter filter, Instant from, Instant until);
 }

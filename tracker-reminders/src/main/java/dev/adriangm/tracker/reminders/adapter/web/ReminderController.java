@@ -8,18 +8,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class ReminderController {
-  private final ReminderStore store;
-  private final ReminderJob job;
+    private final ReminderStore store;
+    private final ReminderJob job;
 
-  public ReminderController(ReminderStore store, ReminderJob job) {
-    this.store = store;
-    this.job = job;
-  }
+    public ReminderController(ReminderStore store, ReminderJob job)
+    {
+        this.store = store;
+        this.job = job;
+    }
 
-  @GetMapping("/reminders")
-  String list(Model model) {
-    model.addAttribute("snapshot", store.snapshot());
-    model.addAttribute("failed", job.failed());
-    return "reminders";
-  }
+    @GetMapping("/reminders")
+    String list(Model model)
+    {
+        model.addAttribute("snapshot", store.snapshot());
+        model.addAttribute("failed", job.failed());
+        return "reminders";
+    }
 }

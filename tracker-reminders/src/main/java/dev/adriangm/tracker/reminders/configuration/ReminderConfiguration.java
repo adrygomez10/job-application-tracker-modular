@@ -12,9 +12,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableScheduling
 public class ReminderConfiguration {
-  @Bean
-  RefreshReminders refreshReminders(
-      ApplicationsApi applications, ReminderStore store, Clock clock) {
-    return new RefreshReminders(applications, new ReminderPolicy(clock), store, clock);
-  }
+    @Bean
+    RefreshReminders refreshReminders(ApplicationsApi applications, ReminderStore store, Clock clock)
+    {
+        return new RefreshReminders(applications, new ReminderPolicy(clock), store, clock);
+    }
 }

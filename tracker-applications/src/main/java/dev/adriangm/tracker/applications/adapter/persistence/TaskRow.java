@@ -7,21 +7,25 @@ import java.util.UUID;
 
 @Embeddable
 class TaskRow {
-  UUID id;
-  String title;
-  LocalDate dueOn;
-  boolean completed;
+    UUID id;
+    String title;
+    LocalDate dueOn;
+    boolean completed;
 
-  protected TaskRow() {}
+    protected TaskRow()
+    {
+    }
 
-  TaskRow(FollowUpTask task) {
-    id = task.id();
-    title = task.title();
-    dueOn = task.dueOn();
-    completed = task.completed();
-  }
+    TaskRow(FollowUpTask task)
+    {
+        id = task.id();
+        title = task.title();
+        dueOn = task.dueOn();
+        completed = task.completed();
+    }
 
-  FollowUpTask domain() {
-    return new FollowUpTask(id, title, dueOn, completed);
-  }
+    FollowUpTask domain()
+    {
+        return new FollowUpTask(id, title, dueOn, completed);
+    }
 }

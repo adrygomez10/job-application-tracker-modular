@@ -8,15 +8,17 @@ import java.util.UUID;
 
 /** Brings an archived application back to summaries and agenda. */
 public final class RestoreApplication {
-  private final VersionedUpdate update;
-  private final Clock clock;
+    private final VersionedUpdate update;
+    private final Clock clock;
 
-  public RestoreApplication(VersionedUpdate update, Clock clock) {
-    this.update = Objects.requireNonNull(update);
-    this.clock = Objects.requireNonNull(clock);
-  }
+    public RestoreApplication(VersionedUpdate update, Clock clock)
+    {
+        this.update = Objects.requireNonNull(update);
+        this.clock = Objects.requireNonNull(clock);
+    }
 
-  public JobApplication execute(UUID id, long version) {
-    return update.apply(id, version, application -> application.restore(clock.instant()));
-  }
+    public JobApplication execute(UUID id, long version)
+    {
+        return update.apply(id, version, application -> application.restore(clock.instant()));
+    }
 }

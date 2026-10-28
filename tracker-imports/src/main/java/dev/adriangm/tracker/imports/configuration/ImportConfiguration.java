@@ -15,12 +15,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ImportConfiguration {
-  @Bean
-  ImportService importService(
-      ApplicationsApi applications, ImportLedger ledger, OfferWriter writer) {
-    var pipeline =
-        new ImportPipeline(
-            List.of(new NormalizeFields(), new RequireFields(), new ValidateOffer(applications)));
-    return new ImportService(new CsvOfferSource(), pipeline, ledger, writer);
-  }
+    @Bean
+    ImportService importService(ApplicationsApi applications, ImportLedger ledger, OfferWriter writer)
+    {
+        var pipeline = new ImportPipeline(
+            List.of(new NormalizeFields(), new RequireFields(), new ValidateOffer(applications))
+        );
+        return new ImportService(new CsvOfferSource(), pipeline, ledger, writer);
+    }
 }

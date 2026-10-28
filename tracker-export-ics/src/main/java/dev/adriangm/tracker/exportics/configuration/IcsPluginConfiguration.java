@@ -7,8 +7,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class IcsPluginConfiguration {
-  @Bean
-  ExportPlugin icsExportPlugin() {
-    return new IcsExportPlugin();
-  }
+    @Bean
+    ExportPlugin icsExportPlugin()
+    {
+        return new IcsExportPlugin();
+    }
 }

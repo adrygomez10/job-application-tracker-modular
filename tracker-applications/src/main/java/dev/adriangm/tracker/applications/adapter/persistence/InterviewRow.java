@@ -10,44 +10,48 @@ import java.util.UUID;
 
 @Embeddable
 class InterviewRow {
-  UUID id;
-  String title;
+    UUID id;
+    String title;
 
-  @Enumerated(EnumType.STRING)
-  Interview.Kind kind;
+    @Enumerated(EnumType.STRING)
+    Interview.Kind kind;
 
-  Instant startsAt;
+    Instant startsAt;
 
-  @Column(length = 500)
-  String location;
+    @Column(length = 500)
+    String location;
 
-  @Column(length = 2000)
-  String url;
+    @Column(length = 2000)
+    String url;
 
-  @Column(length = 10000)
-  String notes;
+    @Column(length = 10000)
+    String notes;
 
-  @Enumerated(EnumType.STRING)
-  Interview.Outcome outcome;
+    @Enumerated(EnumType.STRING)
+    Interview.Outcome outcome;
 
-  @Column(length = 10000)
-  String result;
+    @Column(length = 10000)
+    String result;
 
-  protected InterviewRow() {}
+    protected InterviewRow()
+    {
+    }
 
-  InterviewRow(Interview interview) {
-    id = interview.id();
-    title = interview.title();
-    kind = interview.kind();
-    startsAt = interview.startsAt();
-    location = interview.location();
-    url = interview.url();
-    notes = interview.notes();
-    outcome = interview.outcome();
-    result = interview.result();
-  }
+    InterviewRow(Interview interview)
+    {
+        id = interview.id();
+        title = interview.title();
+        kind = interview.kind();
+        startsAt = interview.startsAt();
+        location = interview.location();
+        url = interview.url();
+        notes = interview.notes();
+        outcome = interview.outcome();
+        result = interview.result();
+    }
 
-  Interview domain() {
-    return new Interview(id, title, kind, startsAt, location, url, notes, outcome, result);
-  }
+    Interview domain()
+    {
+        return new Interview(id, title, kind, startsAt, location, url, notes, outcome, result);
+    }
 }

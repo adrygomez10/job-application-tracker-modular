@@ -19,44 +19,50 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  */
 @ControllerAdvice
 public class WebErrors {
-  @ExceptionHandler(RecordMissing.class)
-  String missing(HttpServletResponse response, Model model) {
-    return error(HttpServletResponse.SC_NOT_FOUND, "missing", response, model);
-  }
+    @ExceptionHandler(RecordMissing.class)
+    String missing(HttpServletResponse response, Model model)
+    {
+        return error(HttpServletResponse.SC_NOT_FOUND, "missing", response, model);
+    }
 
-  @ExceptionHandler({EditConflict.class, OptimisticLockingFailureException.class})
-  String conflict(HttpServletResponse response, Model model) {
-    return error(HttpServletResponse.SC_CONFLICT, "conflict", response, model);
-  }
+    @ExceptionHandler({EditConflict.class, OptimisticLockingFailureException.class})
+    String conflict(HttpServletResponse response, Model model)
+    {
+        return error(HttpServletResponse.SC_CONFLICT, "conflict", response, model);
+    }
 
-  @ExceptionHandler(RuleViolation.class)
-  String rule(RuleViolation invalid, HttpServletResponse response, Model model) {
-    return error(HttpServletResponse.SC_BAD_REQUEST, invalid.code(), response, model);
-  }
+    @ExceptionHandler(RuleViolation.class)
+    String rule(RuleViolation invalid, HttpServletResponse response, Model model)
+    {
+        return error(HttpServletResponse.SC_BAD_REQUEST, invalid.code(), response, model);
+    }
 
-  @ExceptionHandler(InvalidInput.class)
-  String input(InvalidInput invalid, HttpServletResponse response, Model model) {
-    return error(HttpServletResponse.SC_BAD_REQUEST, invalid.code(), response, model);
-  }
+    @ExceptionHandler(InvalidInput.class)
+    String input(InvalidInput invalid, HttpServletResponse response, Model model)
+    {
+        return error(HttpServletResponse.SC_BAD_REQUEST, invalid.code(), response, model);
+    }
 
-  @ExceptionHandler(InvalidCriteria.class)
-  String criteria(HttpServletResponse response, Model model) {
-    return error(HttpServletResponse.SC_BAD_REQUEST, "filters", response, model);
-  }
+    @ExceptionHandler(InvalidCriteria.class)
+    String criteria(HttpServletResponse response, Model model)
+    {
+        return error(HttpServletResponse.SC_BAD_REQUEST, "filters", response, model);
+    }
 
-  @ExceptionHandler({
-    MethodArgumentNotValidException.class,
-    MethodArgumentTypeMismatchException.class,
-    MissingServletRequestParameterException.class
-  })
-  String invalid(HttpServletResponse response, Model model) {
-    return error(HttpServletResponse.SC_BAD_REQUEST, "invalid", response, model);
-  }
+    @ExceptionHandler(
+        {MethodArgumentNotValidException.class, MethodArgumentTypeMismatchException.class,
+            MissingServletRequestParameterException.class}
+    )
+    String invalid(HttpServletResponse response, Model model)
+    {
+        return error(HttpServletResponse.SC_BAD_REQUEST, "invalid", response, model);
+    }
 
-  private String error(int status, String code, HttpServletResponse response, Model model) {
-    response.setStatus(status);
-    model.addAttribute("errorCode", code);
-    model.addAttribute("errorStatus", status);
-    return "error";
-  }
+    private String error(int status, String code, HttpServletResponse response, Model model)
+    {
+        response.setStatus(status);
+        model.addAttribute("errorCode", code);
+        model.addAttribute("errorStatus", status);
+        return "error";
+    }
 }

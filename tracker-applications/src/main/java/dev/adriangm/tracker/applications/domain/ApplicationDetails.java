@@ -11,16 +11,18 @@ public record ApplicationDetails(
     WorkMode workMode,
     String technologies,
     String contact,
-    String notes) {
-  public ApplicationDetails {
-    company = Checks.requiredText(company, 160);
-    role = Checks.requiredText(role, 180);
-    url = Checks.url(url);
-    source = Checks.optionalText(source, 160);
-    location = Checks.optionalText(location, 160);
-    workMode = Objects.requireNonNull(workMode);
-    technologies = Checks.optionalText(technologies, 500);
-    contact = Checks.optionalText(contact, 500);
-    notes = Checks.optionalText(notes, 10000);
-  }
+    String notes
+) {
+    public ApplicationDetails
+    {
+        company = Checks.requiredText(company, 160);
+        role = Checks.requiredText(role, 180);
+        url = Checks.url(url);
+        source = Checks.optionalText(source, 160);
+        location = Checks.optionalText(location, 160);
+        workMode = Objects.requireNonNull(workMode);
+        technologies = Checks.optionalText(technologies, 500);
+        contact = Checks.optionalText(contact, 500);
+        notes = Checks.optionalText(notes, 10000);
+    }
 }

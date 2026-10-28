@@ -11,31 +11,33 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ReminderJob {
-  private static final Logger LOG = LoggerFactory.getLogger(ReminderJob.class);
-  private final RefreshReminders refresh;
-  private volatile boolean failed;
+    private static final Logger LOG = LoggerFactory.getLogger(ReminderJob.class);
+    private final RefreshReminders refresh;
+    private volatile boolean failed;
 
-  public ReminderJob(RefreshReminders refresh) {
-    this.refresh = refresh;
-  }
-
-  @EventListener(ApplicationReadyEvent.class)
-  @Scheduled(
-      fixedDelayString = "${tracker.reminders.interval-ms:60000}",
-      initialDelayString = "${tracker.reminders.interval-ms:60000}")
-  public synchronized void run() {
-    try {
-      refresh.execute();
-      failed = false;
-    } catch (DataAccessException unavailable) {
-      failed = true;
-      LOG.warn(
-          "Reminder refresh failed; previous snapshot retained: {}",
-          unavailable.getClass().getSimpleName());
+    public ReminderJob(RefreshReminders refresh)
+    {
+        this.refresh = refresh;
     }
-  }
 
-  public boolean failed() {
-    return failed;
-  }
+    @EventListener(ApplicationReadyEvent.class)
+    @Scheduled(
+        fixedDelayString = "${tracker.reminders.interval-ms:60000}",
+        initialDelayString = "${tracker.reminders.interval-ms:60000}"
+    )
+    public synchronized void run()
+    {
+        try {
+            refresh.execute();
+            failed = false;
+        } catch (DataAccessException unavailable) {
+            failed = true;
+            LOG.warn("Reminder refresh failed; previous snapshot retained: {}", unavailable.getClass().getSimpleName());
+        }
+    }
+
+    public boolean failed()
+    {
+        return failed;
+    }
 }

@@ -15,22 +15,25 @@ import java.util.UUID;
  * repeated submission of the same form is rejected instead of creating a duplicate.
  */
 public final class RegisterApplication {
-  private final ApplicationStore store;
-  private final UnitOfWork work;
-  private final Clock clock;
+    private final ApplicationStore store;
+    private final UnitOfWork work;
+    private final Clock clock;
 
-  public RegisterApplication(ApplicationStore store, UnitOfWork work, Clock clock) {
-    this.store = Objects.requireNonNull(store);
-    this.work = Objects.requireNonNull(work);
-    this.clock = Objects.requireNonNull(clock);
-  }
+    public RegisterApplication(ApplicationStore store, UnitOfWork work, Clock clock)
+    {
+        this.store = Objects.requireNonNull(store);
+        this.work = Objects.requireNonNull(work);
+        this.clock = Objects.requireNonNull(clock);
+    }
 
-  public JobApplication execute(
-      UUID id, ApplicationDetails details, Status status, LocalDate appliedOn) {
-    return work.required(
-        () ->
-            store.create(
-                JobApplication.create(
-                    id, details, status, appliedOn, clock.instant(), LocalDate.now(clock))));
-  }
+    public JobApplication execute(UUID id, ApplicationDetails details, Status status, LocalDate appliedOn)
+    {
+        return work
+            .required(
+                () -> store
+                    .create(
+                        JobApplication.create(id, details, status, appliedOn, clock.instant(), LocalDate.now(clock))
+                    )
+            );
+    }
 }
