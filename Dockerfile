@@ -14,7 +14,7 @@ FROM dependencies AS build
 COPY . .
 RUN mvn -B -ntp package -DskipTests -DskipITs=true -Djacoco.skip=true
 FROM eclipse-temurin:25-jre-noble AS runtime
-RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/* && groupadd --system tracker && useradd --system --gid tracker tracker
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/* && groupadd --system --gid 10001 tracker && useradd --system --uid 10001 --gid tracker tracker
 WORKDIR /app
 COPY --from=build /workspace/tracker-app/target/tracker.jar app.jar
 USER tracker

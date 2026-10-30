@@ -12,3 +12,19 @@ repos:
         require_serial: true
         stages: [pre-commit, manual]
         files: '(\.java$|(^|/)pom\.xml$|^config/(checkstyle-clean-code|eclipse-formatter)\.xml$|^compose\.style\.yaml$|^\.pre-commit-config\.yaml$|^\.editorconfig$|^\.gitattributes$|^requirements-style\.txt$)'
+      - id: java-quality
+        name: Java quality and architecture (Maven)
+        language: system
+        entry: docker compose -f compose.quality.yaml run --rm --build --no-deps quality
+        pass_filenames: false
+        require_serial: true
+        stages: [pre-commit, manual]
+        files: '(\.java$|(^|/)pom\.xml$|^config/|^Dockerfile$|^compose\.quality\.yaml$|^scripts/container-quality\.sh$)'
+      - id: cloud-quality
+        name: Cloud tooling and infrastructure
+        language: system
+        entry: python scripts/cloud/check.py
+        pass_filenames: false
+        require_serial: true
+        stages: [pre-commit, manual]
+        files: '(^infra/|^deploy/|^scripts/cloud/|^\.github/|^pyproject\.toml$|^requirements-style\.txt$|^\.pre-commit-config\.yaml$)'

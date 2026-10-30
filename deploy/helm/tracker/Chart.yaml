@@ -1,0 +1,7 @@
+apiVersion: v2
+name: tracker
+description: One-day EKS workshop for the modular job application tracker
+type: application
+version: 0.1.0
+appVersion: "2.0.0"
+kubeVersion: ">=1.34.0-0"

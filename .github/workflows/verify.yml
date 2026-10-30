@@ -2,6 +2,7 @@ name: Verify
 on:
   push:
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -16,18 +17,119 @@ jobs:
       - name: Check Java style with Spotless and Checkstyle
         run: docker compose -f compose.style.yaml run --rm --no-deps check
   tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
       - name: Enforce static code quality
         run: bash scripts/quality.sh
       - name: Run all checks in Docker
         run: bash scripts/test.sh
       - name: Upload reports and fictional screenshots
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: verification
-          path: |
-            target/**
+          retention-days: 3
+          if-no-files-found: warn
+          path: target/**
+  cloud:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e
+        with:
+          terraform_version: 1.17.0
+          terraform_wrapper: false
+      - uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
+        with:
+          version: v4.3.1
+      - name: Install pinned validators
+        run: bash scripts/cloud/install-ci-tools.sh
+      - name: Install pinned Python quality tools
+        run: |
+          python3 -m venv .venv-style
+          .venv-style/bin/python -m pip install -r requirements-style.txt
+      - name: Check cloud tooling and deployment configuration
+        run: .venv-style/bin/python scripts/cloud/check.py
+  deliver:
+    needs: [code-style, tests, cloud]
+    if: >-
+      vars.AWS_DEPLOY_ENABLED == 'true' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: aws-workshop
+    concurrency:
+      group: aws-workshop-delivery
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+      AWS_CLUSTER_NAME: ${{ vars.AWS_CLUSTER_NAME }}
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+      TRACKER_HOST: ${{ vars.TRACKER_HOST }}
+      CERTIFICATE_ARN: ${{ vars.CERTIFICATE_ARN }}
+      SOURCE_COMMIT: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Require all delivery settings
+        env:
+          AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+        run: |
+          for name in AWS_REGION AWS_ACCOUNT_ID AWS_CLUSTER_NAME ECR_REPOSITORY TRACKER_HOST CERTIFICATE_ARN AWS_ROLE_ARN; do
+            [[ -n "${!name}" ]] || { echo "Missing variable: $name" >&2; exit 1; }
+          done
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          allowed-account-ids: ${{ env.AWS_ACCOUNT_ID }}
+          role-duration-seconds: 3600
+          role-session-name: tracker-${{ github.run_id }}
+      - uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd
+      - uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
+        with:
+          version: v4.3.1
+      - name: Install pinned kubectl
+        run: |
+          curl -fsSLo kubectl https://dl.k8s.io/release/v1.35.8/bin/linux/amd64/kubectl
+          curl -fsSLo kubectl.sha256 https://dl.k8s.io/release/v1.35.8/bin/linux/amd64/kubectl.sha256
+          printf '%s  kubectl\n' "$(cat kubectl.sha256)" | sha256sum --check
+          sudo install -m 0755 kubectl /usr/local/bin/kubectl
+      - name: Build and publish the verified commit
+        id: image
+        run: |
+          repository="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY"
+          tag="$SOURCE_COMMIT-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          docker build --target runtime --label "org.opencontainers.image.revision=$SOURCE_COMMIT" -t "$repository:$tag" .
+          docker push "$repository:$tag"
+          digest=$(aws ecr describe-images --repository-name "$ECR_REPOSITORY" --image-ids imageTag="$tag" --query 'imageDetails[0].imageDigest' --output text)
+          [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+      - name: Deploy and verify HTTPS
+        env:
+          IMAGE_DIGEST: ${{ steps.image.outputs.digest }}
+        run: bash scripts/cloud/deploy.sh
+      - name: Record delivery identity
+        if: success()
+        env:
+          IMAGE_DIGEST: ${{ steps.image.outputs.digest }}
+        run: |
+          {
+            echo "### Workshop delivery"
+            echo "Commit: $SOURCE_COMMIT"
+            echo "Image digest: $IMAGE_DIGEST"
+            echo "Application: https://$TRACKER_HOST"
+          } >> "$GITHUB_STEP_SUMMARY"
