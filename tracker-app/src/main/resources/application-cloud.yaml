@@ -1,0 +1,28 @@
+server:
+  forward-headers-strategy: native
+  tomcat:
+    redirect-context-root: false
+    remoteip:
+      internal-proxies: '10[.]42[.][0-9]{1,3}[.][0-9]{1,3}'
+      host-header: ""
+      port-header: ""
+      protocol-header: X-Forwarded-Proto
+      remote-ip-header: X-Forwarded-For
+  shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        secure: true
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 25s
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: readinessState,db

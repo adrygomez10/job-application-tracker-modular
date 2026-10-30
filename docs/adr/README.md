@@ -21,3 +21,5 @@ Cada decisión sigue la misma estructura: contexto, decisión, alternativas cons
 - [0011 · Mantener recordatorios y estadísticas en el monolito](0011-no-separar-servicios.md)
 - [0012 · Proyecciones de consulta en la frontera](0012-consultas-publicas.md)
 - [0013 · Fachada de candidaturas para los consumidores de otros módulos](0013-fachada-entre-modulos.md)
+
+- [ADR-0014: entrega temporal en EKS](0014-entrega-temporal-en-eks.md).

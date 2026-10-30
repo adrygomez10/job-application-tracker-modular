@@ -1,0 +1,8 @@
+# Fictional inputs, used only for offline rendering.
+image:
+  repository: 123456789012.dkr.ecr.eu-west-1.amazonaws.com/tracker-workshop
+  digest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+commit: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+ingress:
+  host: tracker.example.invalid
+  certificateArn: arn:aws:acm:eu-west-1:123456789012:certificate/00000000-0000-0000-0000-000000000000

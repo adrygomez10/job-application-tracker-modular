@@ -10,4 +10,18 @@
 /.vscode/
 *.log
 *.iml
+
+# Local cloud tools, plans, credentials and state
+.tools/
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+!*.tfvars.example
+*.tfbackend
+.cloud/
 .venv-style/
+__pycache__/
+.mypy_cache/
+.ruff_cache/

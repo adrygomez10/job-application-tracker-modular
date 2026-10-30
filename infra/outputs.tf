@@ -1,0 +1,9 @@
+output "region" { value = var.aws_region }
+output "cluster_name" { value = aws_eks_cluster.workshop.name }
+output "vpc_id" { value = aws_vpc.workshop.id }
+output "alb_role_arn" { value = aws_iam_role.service_accounts["alb"].arn }
+output "delivery_role_arn" { value = aws_iam_role.delivery.arn }
+output "ecr_repository_url" { value = aws_ecr_repository.app.repository_url }
+output "ecr_repository_name" { value = aws_ecr_repository.app.name }
+output "account_id" { value = local.account_id }
+output "oidc_subject" { value = var.github_oidc_subject }

@@ -1,0 +1,22 @@
+image:
+  repository: ""
+  digest: ""
+commit: ""
+secretName: tracker-runtime
+zone: Europe/Madrid
+database:
+  image: postgres:18.6
+  storageClass: tracker-gp3
+  storage: 5Gi
+ingress:
+  enabled: true
+  host: ""
+  certificateArn: ""
+app:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi

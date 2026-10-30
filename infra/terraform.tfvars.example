@@ -1,0 +1,10 @@
+# Copy to terraform.tfvars (ignored). Resolve account/role/subject before applying.
+aws_region          = "eu-west-1"
+name                = "tracker-workshop"
+kubernetes_version  = "1.35"
+admin_principal_arn = "arn:aws:iam::123456789012:role/REPLACE_WITH_YOUR_LOCAL_ROLE"
+
+# Confirm the real subject using the OIDC claims workflow. Never use a wildcard.
+github_oidc_subject = "repo:REPLACE_OWNER/REPLACE_REPOSITORY:environment:aws-workshop"
+create_github_oidc_provider = true
+app_hostname = "tracker-lab.example.com"

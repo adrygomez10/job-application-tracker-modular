@@ -9,4 +9,16 @@ reports
 backups
 .idea
 .vscode
+
+infra
+deploy
+.tools
+.cloud
+.github
+**/*.tfstate*
+**/*.tfvars
+**/*.tfplan
 .venv-style/
+**/__pycache__/
+.mypy_cache/
+.ruff_cache/

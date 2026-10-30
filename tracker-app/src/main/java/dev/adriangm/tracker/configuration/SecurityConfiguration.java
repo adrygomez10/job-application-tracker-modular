@@ -31,7 +31,15 @@ public class SecurityConfiguration {
         return http
             .authorizeHttpRequests(
                 requests -> requests
-                    .requestMatchers("/login", "/css/**", "/fonts/**", "/actuator/health", "/error")
+                    .requestMatchers(
+                        "/login",
+                        "/css/**",
+                        "/fonts/**",
+                        "/actuator/health",
+                        "/actuator/health/liveness",
+                        "/actuator/health/readiness",
+                        "/error"
+                    )
                     .permitAll()
                     .anyRequest()
                     .authenticated()
